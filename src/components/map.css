@@ -1,0 +1,49 @@
+
+.row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+  background-color: #32527b;
+}
+
+.map {
+  display: flex;
+  flex-direction: column;
+  flex-basis: 100%;
+  flex: 1;
+  margin: 10px;
+  padding: 10px;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid whitesmoke;
+}
+
+.toolbox {
+  display: flex;
+  flex-direction: row;
+  /* flex-basis: 100%; */
+  flex: 1;
+  align-items: center;
+  /* justify-content: center; */
+  margin: 10px;
+  border: 2px solid whitesmoke;
+  width: 50%;
+  height: 50%;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+}
+
+.button {
+    margin: 10px;
+}
+
+
+h1 {
+  color: whitesmoke;
+  padding: 40px;
+  font-family: "Lucida Console", "Courier New", monospace;
+}
