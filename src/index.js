@@ -7,7 +7,8 @@ import reportWebVitals from './reportWebVitals';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   // <React.StrictMode>
-    <App />
+  // Reason : https://stackoverflow.com/questions/61254372/my-react-component-is-rendering-twice-because-of-strict-mode
+  <App />
 );
 
 // If you want to start measuring performance in your app, pass a function
