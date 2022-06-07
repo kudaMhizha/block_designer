@@ -1,7 +1,7 @@
 import { computeOffset } from "spherical-geometry-js";
-import Cardinals from "../constants/config";
+import config from "../constants/config";
 
-const { NORTH, SOUTH, WEST, EAST } = Cardinals;
+const { NORTH, SOUTH, WEST, EAST } = config;
 
 /**
  * Helper function to compute block corridor placement
@@ -10,6 +10,7 @@ const { NORTH, SOUTH, WEST, EAST } = Cardinals;
  */
 export const calculateCorridorPlacement = (block) => {
   //Corridors: Width of corridor between North and South Sections
+  let corridorCoords = [];
   const {
     numberOfTiers,
     corridorPlacement,
@@ -23,7 +24,6 @@ export const calculateCorridorPlacement = (block) => {
   const halfHeight = 0.5 * height;
   const halfCw = 0.5 * corridorWidth;
   const mod = numberOfTiers % 2 === 1;
-  let corridorCoords = [];
   console.log({ numberOfTiers, halfHeight, halfCw });
 
   //for tiers = 4
@@ -46,34 +46,36 @@ export const calculateCorridorPlacement = (block) => {
     ? computeOffset(northWest, halfHeight + halfCw, SOUTH)
     : computeOffset(middleBlockWest, corridorWidth, SOUTH);
 
+  const topPlacement = [
+    northEast, 
+    northWest, 
+    computeOffset(northWest, corridorWidth, SOUTH),
+    computeOffset(northEast, corridorWidth, SOUTH),
+  ]
+  const bottomPlacement = [
+    computeOffset(southEast, corridorWidth, NORTH),
+    computeOffset(southWest, corridorWidth, NORTH),
+    southWest,
+    southEast,
+  ];
+
+  const centerPlacement = [
+    middlecorridornorthEast,
+    middlecorridornorthWest,
+    middlecorridorsouthWest,
+    middlecorridorsouthEast,
+  ];
+
   if (mod) {
     //number of tiers is odd (3 or 5)
     switch (corridorPlacement) {
       //to draw rectangle using polygon follow [NE, NW, SW, SE]
       case "top":
-        corridorCoords = [
-          northEast,
-          northWest,
-          computeOffset(northWest, corridorWidth, SOUTH),
-          computeOffset(northEast, corridorWidth, SOUTH),
-        ];
-        break;
+        return topPlacement
       case "bottom":
-        corridorCoords = [
-          computeOffset(southEast, corridorWidth, NORTH),
-          computeOffset(southWest, corridorWidth, NORTH),
-          southWest,
-          southEast,
-        ];
-        break;
+        return bottomPlacement
       case "mid-center":
-        corridorCoords = [
-          middlecorridornorthEast,
-          middlecorridornorthWest,
-          middlecorridorsouthWest,
-          middlecorridorsouthEast,
-        ];
-        break;
+        return centerPlacement
       case "mid-north":
         corridorCoords = [
           computeOffset(middlecorridornorthEast, corridorWidth, NORTH),
@@ -98,21 +100,9 @@ export const calculateCorridorPlacement = (block) => {
     switch (corridorPlacement) {
       //to draw rectangle using polygon follow [NE, NW, SW, SE]
       case "top":
-        corridorCoords = [
-          northEast,
-          northWest,
-          computeOffset(northWest, corridorWidth, SOUTH),
-          computeOffset(northEast, corridorWidth, SOUTH),
-        ];
-        break;
+        return topPlacement;
       case "bottom":
-        corridorCoords = [
-          computeOffset(southEast, corridorWidth, NORTH),
-          computeOffset(southWest, corridorWidth, NORTH),
-          southWest,
-          southEast,
-        ];
-        break;
+        return bottomPlacement;
       case "mid-north":
         corridorCoords = [
           middlecorridornorthEast,
