@@ -63,16 +63,14 @@ function MapComponent() {
         - numberOfTiers(full-sized) = 5
         - numberOfTiers(half-sized) = 4
       */
+     //TODO: refactor size parameter - use block_type [full or half]
 
       const { blockHeight, blockWidth, corridorWidth, numberOfTiers } = calculateBlockDimensions(size)
-      console.log({ blockHeight, blockWidth, corridorWidth, numberOfTiers, size })
-      const blockCoords = computeCardinals(center, blockHeight, blockWidth, size);
+      const blockCoords = computeCardinals(center, blockHeight, blockWidth);
       const [northEast, northWest, southWest, southEast ] = blockCoords
 
-      //height = size === 4 ? height * 0.5 : height
       const blockDetails = { numberOfTiers, corridorPlacement, northEast, northWest, southEast, southWest, corridorWidth, blockHeight }
       const corridorCoords = calculateCorridorPlacement(blockDetails)
-      console.log('corridorCoords', corridorCoords)
       const blockCorners = formatCoordinates(blockCoords)
       const corridorCorners = formatCoordinates(corridorCoords)
 
@@ -83,19 +81,6 @@ function MapComponent() {
       }
 
       setPolyId(polyId + 1) //TODO: need a better way to allocate Polygon IDs
-      console.log(polyObject)
-      //create new block
-      // const polygon = new window.google.maps.Polygon({
-      //   paths: convertedCorridorCorners,
-      //   strokeColor: '#FF0000',
-      //   strokeOpacity: 0.9,
-      //   strokeWeight: 1,
-      //   fillColor: '#FF0000',
-      //   fillOpacity: 0.3,
-      //   map,
-      //   draggable: true,
-      // });
-      // console.log('polygon', polygon)
       setPolygons([...polygons, polyObject])
   }
   console.log(polygons)
@@ -110,7 +95,6 @@ function MapComponent() {
     overlay.setMap(map);
 
     const x = e.pageX - 400
-    console.log('e', map)
 
     const y = e.pageY + 100;
     if(x > 0) {
@@ -179,7 +163,6 @@ function MapComponent() {
                       //drag event clicked point coords
                       const lat = e.latLng.lat()
                       const lng = e.latLng.lng()
-                      console.log({lat, lng})
 
                       coordsArray.forEach((latlng, index) => {
                         const latLng = {lat: latlng.lat(), lng: latlng.lng()}
@@ -194,10 +177,9 @@ function MapComponent() {
                     )
                     const coordsArray = polygonItem.current[poly.id].state.polygon.latLngs[coordsKey][0][coordsKey]
                     console.log('onDragEnd', coordsArray)
-                    //console.log('state', coordsArray) //get active Polygon ID
+                    
                     const lat = e.latLng.lat()
                     const lng = e.latLng.lng()
-                    console.log({lat, lng})
 
                     coordsArray.forEach((latlng) => {
                       console.log(latlng.lat() + " - " + latlng.lng());

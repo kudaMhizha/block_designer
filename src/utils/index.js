@@ -38,6 +38,12 @@ export const calculateCorridorPlacement = (block) => {
   const mod = (numberOfTiers + 1) % 2 === 1;
   console.log({ numberOfTiers, blockHeight, corridorWidth, mod });
 
+//   [
+//     middlecorridornorthEast,
+//     middlecorridornorthWest,
+//     middleBlockWest,
+//     middleBlockEast,
+//   ];
   //for tiers = 4
   const middleBlockEast = computeOffset(northEast, halfHeight, SOUTH);
   const middleBlockWest = computeOffset(northWest, halfHeight, SOUTH);
@@ -89,21 +95,19 @@ export const calculateCorridorPlacement = (block) => {
       case "mid-center":
         return centerPlacement
       case "mid-north":
-        corridorCoords = [
+        return [
           computeOffset(middlecorridornorthEast, corridorWidth, NORTH),
           computeOffset(middlecorridornorthWest, corridorWidth, NORTH),
           middlecorridornorthWest,
           middlecorridornorthEast,
         ];
-        break;
       case "mid-south":
-        corridorCoords = [
+        return [
           middlecorridorsouthEast,
           middlecorridorsouthWest,
           computeOffset(middlecorridorsouthWest, corridorWidth, SOUTH),
           computeOffset(middlecorridorsouthEast, corridorWidth, SOUTH),
         ];
-        break;
       default:
         break;
     }
@@ -123,19 +127,18 @@ export const calculateCorridorPlacement = (block) => {
           middleBlockEast,
         ];
       case "mid-south":
-        corridorCoords = [
+        return [
           middleBlockEast,
           middleBlockWest,
           middlecorridorsouthWest,
           middlecorridorsouthEast,
         ];
-        break;
       default:
         break;
     }
   }
 
-  return corridorCoords;
+  return [];
 };
 
 /**
@@ -146,15 +149,16 @@ export const calculateCorridorPlacement = (block) => {
  * @param width - block width
  * @param size - half or full sized
  */
-export const computeCardinals = (center, height, width, size) => {
-  const north = computeOffset(center, height / size, NORTH);
-  const south = computeOffset(center, height / size, SOUTH);
+export const computeCardinals = (center, height, width) => {
+  
+  const north = computeOffset(center, height / 2, NORTH);
+  const south = computeOffset(center, height / 2, SOUTH);
 
-  const northEast = computeOffset(north, width / size, EAST);
-  const northWest = computeOffset(north, width / size, WEST);
+  const northEast = computeOffset(north, width / 2, EAST);
+  const northWest = computeOffset(north, width / 2, WEST);
 
-  const southEast = computeOffset(south, width / size, EAST);
-  const southWest = computeOffset(south, width / size, WEST);
+  const southEast = computeOffset(south, width / 2, EAST);
+  const southWest = computeOffset(south, width / 2, WEST);
 
   return [northEast, northWest, southWest, southEast];
 };
