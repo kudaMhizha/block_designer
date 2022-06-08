@@ -1,8 +1,20 @@
 import { computeOffset } from "spherical-geometry-js";
 import config from "../constants/config";
+import { blockCalculations } from './blockCalculations'
 
 const { NORTH, SOUTH, WEST, EAST } = config;
 
+/**
+* Helper function to format coordinates for Polygon corners
+* @param coords - latitude and longitude coords
+**/
+export const formatCoordinates = (coords) =>
+  coords.map((coord) => ({
+    lat: coord.latitude,
+    lng: coord.longitude,
+  }));
+
+export const calculateBlockDimensions = blockCalculations
 /**
  * Helper function to compute block corridor placement
  *
@@ -19,12 +31,12 @@ export const calculateCorridorPlacement = (block) => {
     southEast,
     southWest,
     corridorWidth,
-    height,
+    blockHeight,
   } = block;
-  const halfHeight = 0.5 * height;
+  const halfHeight = 0.5 * blockHeight;
   const halfCw = 0.5 * corridorWidth;
-  const mod = numberOfTiers % 2 === 1;
-  console.log({ numberOfTiers, halfHeight, halfCw });
+  const mod = (numberOfTiers + 1) % 2 === 1;
+  console.log({ numberOfTiers, blockHeight, corridorWidth, mod });
 
   //for tiers = 4
   const middleBlockEast = computeOffset(northEast, halfHeight, SOUTH);
@@ -104,13 +116,12 @@ export const calculateCorridorPlacement = (block) => {
       case "bottom":
         return bottomPlacement;
       case "mid-north":
-        corridorCoords = [
+        return [
           middlecorridornorthEast,
           middlecorridornorthWest,
           middleBlockWest,
           middleBlockEast,
         ];
-        break;
       case "mid-south":
         corridorCoords = [
           middleBlockEast,

@@ -1,7 +1,7 @@
 import React, { useRef, useCallback, useState, memo } from "react";
 import { GoogleMap, useJsApiLoader, KmlLayer, Polygon } from "@react-google-maps/api";
 import './map.css'
-import { calculateCorridorPlacement, computeCardinals } from '../utils'
+import { calculateCorridorPlacement, computeCardinals, calculateBlockDimensions, formatCoordinates } from '../utils'
 
 const center = { // TODO: dynamically get the center of polygon 
   lat: -32.67261560482223,
@@ -63,29 +63,18 @@ function MapComponent() {
         - numberOfTiers(full-sized) = 5
         - numberOfTiers(half-sized) = 4
       */
-      console.log(size)
 
-      // const center = map.getCenter()
-      // Number of Tiers calculated as 
-      const numberOfTiers = size === 4 ? 4: 5
-      let height = 36; 
-      let width = 26;
-      const corridorWidth = 5
+      const { blockHeight, blockWidth, corridorWidth, numberOfTiers } = calculateBlockDimensions(size)
+      console.log({ blockHeight, blockWidth, corridorWidth, numberOfTiers, size })
+      const blockCoords = computeCardinals(center, blockHeight, blockWidth, size);
+      const [northEast, northWest, southWest, southEast ] = blockCoords
 
-      const blockCoords = computeCardinals(center, height, width, size);
-      const [northEast, northWest, southEast, southWest ] = blockCoords
-
-      height = size === 4 ? height * 0.5 : height
-      const blockDetails = { numberOfTiers, corridorPlacement, northEast, northWest, southEast, southWest, corridorWidth, height }
+      //height = size === 4 ? height * 0.5 : height
+      const blockDetails = { numberOfTiers, corridorPlacement, northEast, northWest, southEast, southWest, corridorWidth, blockHeight }
       const corridorCoords = calculateCorridorPlacement(blockDetails)
       console.log('corridorCoords', corridorCoords)
-      const blockCorners = blockCoords.map(coord =>(
-        {lat: coord.latitude, lng: coord.longitude} 
-      ))
-
-      const corridorCorners = corridorCoords.map(coord =>(
-        {lat: coord.latitude, lng: coord.longitude}
-      ))
+      const blockCorners = formatCoordinates(blockCoords)
+      const corridorCorners = formatCoordinates(corridorCoords)
 
       const polyObject = {
         id: polyId, 
@@ -243,9 +232,9 @@ function MapComponent() {
         <h1>HALF BLOCKS</h1>
         <div>
           <button className='button'><img src="images/half-top.png" alt="top" onClick={ () => handleClick(4, 'top')}/></button>
-          <button className='button'><img src="images/half-bottom.png" alt="top" onClick={ () => handleClick(4, 'bottom')}/></button>
-          <button className='button'><img src="images/half-mid-north.png" alt="top" onClick={ () => handleClick(4, 'mid-north')}/></button>
-          <button className='button'><img src="images/half-mid-south.png" alt="top" onClick={ () => handleClick(4, 'mid-south')}/></button>
+          <button className='button'><img src="images/half-bottom.png" alt="bottom" onClick={ () => handleClick(4, 'bottom')}/></button>
+          <button className='button'><img src="images/half-mid-north.png" alt="mid-north" onClick={ () => handleClick(4, 'mid-north')}/></button>
+          <button className='button'><img src="images/half-mid-south.png" alt="mid-south" onClick={ () => handleClick(4, 'mid-south')}/></button>
         </div>
         <h1>FULL BLOCKS</h1>
         <div>

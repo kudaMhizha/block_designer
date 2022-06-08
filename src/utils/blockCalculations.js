@@ -1,4 +1,4 @@
-/*
+/**
  * All template blocks will be fixed rectangles. 
  * The width and height of these rectangles will be determined through values 
  * provided by the user during configuration as well as API calls and calculations.
@@ -8,11 +8,12 @@
  * @param corridorWidth 
  * @param nMS - numberOfModulesPerString
  * @param cTO - trackerOverhangClearance
+ * @param size - full size or half size block 
 
-*/
-export const blockCalculations = () => {
+**/
+export const blockCalculations = (size) => {
   //(a) Parameters determined from configuration steps (User Input)
-  const wTB = 7.5;
+  const wTB = size === 4 ? 3.75: 7.5;
   const pitch = 6;
   const corridorWidth = 11;
   const nMS = 28;
@@ -37,9 +38,8 @@ export const blockCalculations = () => {
   const blockWidth = nRow * pitch;
 
   const wB = nRow * nSR * nMS * wModule; //Actual Block DC Size in Watts
-  const numberOfTemplates = numberOfTiers + 1
 
-  return { blockHeight, blockWidth, wB, numberOfTemplates };
+  return { blockHeight, blockWidth, corridorWidth, numberOfTiers };
 };
 
 const getModuleTrackerParameters = () => {
