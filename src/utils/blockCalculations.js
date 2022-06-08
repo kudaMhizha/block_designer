@@ -5,7 +5,7 @@
  * 
  * @param wTB - target block size (megaWatts)
  * @param pitch 
- * @param corridorWidth - block width
+ * @param corridorWidth 
  * @param nMS - numberOfModulesPerString
  * @param cTO - trackerOverhangClearance
 
@@ -26,17 +26,17 @@ export const blockCalculations = () => {
 
   // (c) Parameters determined by the UI
 
-  const numberOfTiers = wTB <= 2.5 ? 2 : wTB <= 5 ? 3 : 4; //depends on wTB
+  const numberOfTiers = wTB <= 2.5 ? 2 : wTB <= 5 ? 3 : 4; 
   const wString = wModule * nMS; //stringCapacity
   const nString = Math.ceil((wTB * 1000000) / wString); //numberOfBlockStrings
   const nSR = numberOfTiers * nST; //numberOfStringsPerRow
-  const nRow = Math.ceil(nString / nSR);
+  const nRow = Math.ceil(nString / nSR); //numberOfRowsPerBlock
 
   const blockHeight =
     numberOfTiers * lTrac + 2 * (numberOfTiers - 1) * cTO + corridorWidth;
   const blockWidth = nRow * pitch;
 
-  const wB = nRow * nSR * nMS * wModule; //Actual Block DC Size
+  const wB = nRow * nSR * nMS * wModule; //Actual Block DC Size in Watts
   const numberOfTemplates = numberOfTiers + 1
 
   return { blockHeight, blockWidth, wB, numberOfTemplates };
