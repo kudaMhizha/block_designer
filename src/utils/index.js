@@ -36,7 +36,7 @@ export const calculateCorridorPlacement = (block) => {
   const halfHeight = 0.5 * blockHeight;
   const halfCw = 0.5 * corridorWidth;
   const mod = (numberOfTiers + 1) % 2 === 1;
-  console.log({ numberOfTiers, blockHeight, corridorWidth, mod });
+  // console.log({ numberOfTiers, blockHeight, corridorWidth, mod });
 
 //   [
 //     middlecorridornorthEast,

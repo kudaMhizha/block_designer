@@ -2,7 +2,8 @@ import React, { useRef, useCallback, useState, memo } from "react";
 import { GoogleMap, useJsApiLoader, KmlLayer, Polygon } from "@react-google-maps/api";
 import './map.css'
 import { calculateCorridorPlacement, computeCardinals, calculateBlockDimensions, formatCoordinates } from '../utils'
-
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import 'react-tabs/style/react-tabs.css';
 const center = { // TODO: dynamically get the center of polygon 
   lat: -32.67261560482223,
   lng: 20.07672986669573,
@@ -14,10 +15,10 @@ const containerStyle = {
 };
 
 const polygonStyling = {
-  strokeColor: '#FF0000',
+  strokeColor: '#fada00',
   strokeOpacity: 0.9,
-  strokeWeight: 1,
-  fillColor: '#FF0000',
+  strokeWeight: 3,
+  fillColor: '#fada00',
   fillOpacity: 0.3,
   draggable: true
 }
@@ -75,16 +76,15 @@ function MapComponent() {
       const corridorCorners = formatCoordinates(corridorCoords)
 
       const polyObject = {
-        id: polyId, 
+        id: `BK0${polyId + 1}`, 
         paths: [blockCorners, corridorCorners.reverse()], 
-        blockSize: size === 2? 'Full-Sized':'Half-Sized'
+        blockSize: size === 2? 'Full Block':'Half Block'
       }
 
       setPolyId(polyId + 1) //TODO: need a better way to allocate Polygon IDs
       setPolygons([...polygons, polyObject])
   }
-  console.log(polygons)
-
+  console.table(polygons)
   /*
   TODO: Map needs to be in IDLE status for the Drag in functionality to work. 
   */
@@ -127,6 +127,9 @@ function MapComponent() {
   return isLoaded ? (
   <div>
     <div className='row'>
+    <div>
+
+    </div>
       <div className='map'>
         <GoogleMap
           mapContainerStyle={containerStyle}
@@ -146,7 +149,7 @@ function MapComponent() {
           polygons && polygons.map((poly) => {
             return (
                 <Polygon
-                  onLoad={ () => console.log('ids', poly.id)}
+                  onLoad={ () => console.log('Block ID: ', poly.id)}
                   ref={(element) => polygonItem.current[poly.id] = element}
                   key={poly.id}
                   id={poly.id}
@@ -159,33 +162,42 @@ function MapComponent() {
                         .find( (key) => key.length === 2
                       )
                       const coordsArray = polygonItem.current[poly.id].state.polygon.latLngs[coordsKey][0][coordsKey]
-                      console.log('coordsArray', coordsArray)
+                      // console.log('coordsArray', coordsArray)
                       //drag event clicked point coords
                       const lat = e.latLng.lat()
                       const lng = e.latLng.lng()
+                      const compass = ['NE','NW','SW', 'SE']
+                      const corners = []
 
+                      console.log('onDragStart')
                       coordsArray.forEach((latlng, index) => {
-                        const latLng = {lat: latlng.lat(), lng: latlng.lng()}
-                        console.log(latlng.lat() + " - " + latlng.lng());
+                        const coord = {lat: latlng.lat(), lng: latlng.lng()}
+                        corners.push({corner: compass[index], coordinates: "LAT: " + coord.lat + ", LNG:" + coord.lng});
                       });
+                      console.table(corners);
                   }}
                   onDragEnd = { (e) => {
-                    console.log('onDragEnd', polygonItem.current[poly.id].state.polygon.latLngs)
                     const coordsKey =   
                     Object.keys(polygonItem.current[poly.id].state.polygon.latLngs)
                       .find( (key) => key.length === 2
                     )
                     const coordsArray = polygonItem.current[poly.id].state.polygon.latLngs[coordsKey][0][coordsKey]
-                    console.log('onDragEnd', coordsArray)
+                    // console.log('onDragEnd', coordsArray)
                     
                     const lat = e.latLng.lat()
                     const lng = e.latLng.lng()
+                    
+                    const compass = ['NE','NW','SW', 'SE']
+                    const corners = []
 
-                    coordsArray.forEach((latlng) => {
-                      console.log(latlng.lat() + " - " + latlng.lng());
-                    });
+                      console.log('onDragEnd')
+                      coordsArray.forEach((latlng, index) => {
+                        const coord = {lat: latlng.lat(), lng: latlng.lng()}
+                        corners.push({corner: compass[index], coordinates: "LAT: " + coord.lat + ", LNG:" + coord.lng});
+                      });
+                      console.table(corners);
                   }}
-                  onDblClick = { () => {
+                  onClick = { () => {
                     console.log('delete', polygonItem.current[poly.id])
                     polygonItem.current[poly.id].state.polygon.setMap(null)
                   }}
@@ -213,19 +225,20 @@ function MapComponent() {
       <div className='toolbox'>
         <h1>HALF BLOCKS</h1>
         <div>
-          <button className='button'><img src="images/half-top.png" alt="top" onClick={ () => handleClick(4, 'top')}/></button>
-          <button className='button'><img src="images/half-bottom.png" alt="bottom" onClick={ () => handleClick(4, 'bottom')}/></button>
-          <button className='button'><img src="images/half-mid-north.png" alt="mid-north" onClick={ () => handleClick(4, 'mid-north')}/></button>
-          <button className='button'><img src="images/half-mid-south.png" alt="mid-south" onClick={ () => handleClick(4, 'mid-south')}/></button>
+          <button className='button'><img src="images/top.png" alt="top" onClick={ () => handleClick(4, 'top')}/></button>
+          <button className='button'><img src="images/bottom.png" alt="bottom" onClick={ () => handleClick(4, 'bottom')}/></button>
+          <button className='button'><img src="images/center-top.png" alt="mid-north" onClick={ () => handleClick(4, 'mid-north')}/></button>
+          <button className='button'><img src="images/center-bottom.png" alt="mid-south" onClick={ () => handleClick(4, 'mid-south')}/></button>
         </div>
         <h1>FULL BLOCKS</h1>
         <div>
           <button className='button'><img src="images/top.png" alt="top" onClick={ () => handleClick(2, 'top')} onDragEnd={handleDragIn} /></button>        
           <button className='button'><img src="images/bottom.png" alt="bottom" onClick={ () => handleClick(2, 'bottom')} onDragEnd={handleDragIn}/></button>
-          <button className='button'><img src="images/mid1.png" alt="mid-north" onClick={ () => handleClick(2, 'mid-north')}onDragEnd={handleDragIn} /></button>
-          <button className='button'><img src="images/mid2.png" alt="mid-center" onClick={ () => handleClick(2, 'mid-center')} onDragEnd={handleDragIn}/></button>
-          <button className='button'><img src="images/mid3.png" alt="mid-south" onClick={ () => handleClick(2, 'mid-south')} onDragEnd={handleDragIn}/></button>
+          <button className='button'><img src="images/center-top.png" alt="mid-north" onClick={ () => handleClick(2, 'mid-north')}onDragEnd={handleDragIn} /></button>
+          <button className='button'><img src="images/center.png" alt="mid-center" onClick={ () => handleClick(2, 'mid-center')} onDragEnd={handleDragIn}/></button>
+          <button className='button'><img src="images/center-bottom.png" alt="mid-south" onClick={ () => handleClick(2, 'mid-south')} onDragEnd={handleDragIn}/></button>
         </div>
+        
 
       </div>
     </div>

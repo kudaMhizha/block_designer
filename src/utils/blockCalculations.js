@@ -13,7 +13,7 @@
 **/
 export const blockCalculations = (size) => {
   //(a) Parameters determined from configuration steps (User Input)
-  const wTB = size === 4 ? 3.75: 7.5;
+  const wTB = size === 4 ? 0.75: 2.5;
   const pitch = 6;
   const corridorWidth = 11;
   const nMS = 28;
@@ -38,7 +38,8 @@ export const blockCalculations = (size) => {
   const blockWidth = nRow * pitch;
 
   const wB = nRow * nSR * nMS * wModule; //Actual Block DC Size in Watts
-
+  const fakeTiers = size === 4 ? 4 : 5;
+  console.table({ blockHeight, blockWidth, corridorWidth, numberOfTiers: fakeTiers });
   return { blockHeight, blockWidth, corridorWidth, numberOfTiers };
 };
 
