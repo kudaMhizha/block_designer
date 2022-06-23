@@ -15,7 +15,7 @@ export const blockCalculations = (size) => {
   //(a) Parameters determined from configuration steps (User Input)
   const wTB = size === 4 ? 0.75: 2.5;
   const pitch = 6;
-  const corridorWidth = 11;
+  const corridorWidth = 25;
   const nMS = 28;
   const cTO = 1;
 
